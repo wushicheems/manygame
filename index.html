@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>武士芝士小游戏平台</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
+            color: #fff;
+            min-height: 100vh;
+            background-attachment: fixed;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* 顶部导航栏 */
+        header {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            margin-bottom: 30px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .logo {
+            width: 60px;
+            height: 60px;
+            background: url('/logo.png') center/cover no-repeat;
+            border-radius: 12px;
+            margin-right: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .title {
+            font-size: 28px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* 主布局 */
+        .main-layout {
+            display: flex;
+            gap: 25px;
+        }
+        
+        /* 侧边栏 */
+        .sidebar {
+            width: 280px;
+            flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .search-box {
+            position: relative;
+            margin-bottom: 25px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border-radius: 50px;
+            border: none;
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            font-size: 16px;
+        }
+        
+        .search-box input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .filters h3 {
+            margin: 20px 0 15px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .filter-options {
+            list-style: none;
+        }
+        
+        .filter-options li {
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .filter-options li:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .filter-options li.active {
+            background: rgba(255, 255, 255, 0.25);
+            font-weight: 600;
+        }
+        
+        .category-icon {
+            width: 24px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* 游戏网格 */
+        .games-grid {
+            flex-grow: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 25px;
+        }
+        
+        .game-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        
+        .game-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .game-logo {
+            width: 100%;
+            height: 160px;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .game-logo::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('') center/cover no-repeat;
+            opacity: 0.8;
+        }
+        
+        .game-logo i {
+            font-size: 50px;
+            color: #fff;
+            z-index: 1;
+        }
+        
+        .game-info {
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .game-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .game-category {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        /* 游戏弹窗 */
+        .game-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+        
+        .game-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            width: 90%;
+            max-width: 900px;
+            background: #1a3e6a;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .game-frame {
+            width: 100%;
+            height: 500px;
+            background: #0e2a47;
+            border: none;
+        }
+        
+        .modal-actions {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .btn-close {
+            background: #ff5252;
+            color: white;
+        }
+        
+        .btn-close:hover {
+            background: #ff3838;
+            transform: translateY(-2px);
+        }
+        
+        .btn-fullscreen {
+            background: #2ecc71;
+            color: white;
+        }
+        
+        .btn-fullscreen:hover {
+            background: #27ae60;
+            transform: translateY(-2px);
+        }
+        
+        /* 分类标题 */
+        .category-title {
+            font-size: 24px;
+            margin: 30px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .category-title-icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            .main-layout {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+            }
+            
+            .games-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .games-grid {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+                gap: 15px;
+            }
+            
+            .game-logo {
+                height: 120px;
+            }
+            
+            header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .logo {
+                margin-right: 0;
+            }
+        }
+        
+        /* 加载指示器 */
+        .loader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+            grid-column: 1 / -1;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .loader .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        .loader p {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* 波浪装饰 */
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1200 120" xmlns="http://www.w3.org/2000/svg" fill="%23ffffff22"><path d="M0 0v46.29c47.79 22.2 103.59 32.17 158 28 70.36-5.37 136.33-33.31 206.8-37.5 73.84-4.36 147.54 16.88 218.2 35.26 69.27 18 138.3 24.88 209.4 13.08 36.15-6 69.85-17.84 104.45-29.34C989.49 25 1113-14.29 1200 52.47V0z" /></svg>');
+            background-size: 1200px 100px;
+            animation: wave 12s linear infinite;
+        }
+        
+        .wave:nth-child(2) {
+            animation-delay: -5s;
+            opacity: 0.5;
+        }
+        
+        @keyframes wave {
+            0% { background-position-x: 0; }
+            100% { background-position-x: 1200px; }
+        }
+        
+        /* 海洋生物装饰 */
+        .ocean-decoration {
+            position: fixed;
+            z-index: -1;
+            opacity: 0.1;
+        }
+        
+        .fish {
+            position: absolute;
+            font-size: 24px;
+            animation: swim 20s linear infinite;
+        }
+        
+        @keyframes swim {
+            0% { transform: translateX(-50px) translateY(0) scaleX(1); }
+            50% { transform: translateX(calc(100vw + 50px)) translateY(100px) scaleX(1); }
+            51% { transform: translateX(calc(100vw + 50px)) translateY(100px) scaleX(-1); }
+            100% { transform: translateX(-50px) translateY(0) scaleX(-1); }
+        }
+    </style>
+</head>
+<body>
+    <!-- 海洋生物装饰 -->
+    <div class="ocean-decoration">
+        <div class="fish" style="top: 20%; left: 10%; animation-delay: 0s;">🐠</div>
+        <div class="fish" style="top: 60%; left: 20%; animation-delay: 3s;">🐟</div>
+        <div class="fish" style="top: 40%; left: 5%; animation-delay: 7s;">🐡</div>
+        <div class="fish" style="top: 80%; left: 15%; animation-delay: 12s;">🦈</div>
+    </div>
+    
+    <!-- 波浪 -->
+    <div class="wave"></div>
+    <div class="wave"></div>
+    
+    <div class="container">
+        <!-- 顶部导航栏 -->
+        <header>
+            <div class="logo"></div>
+            <h1 class="title">武士芝士小游戏</h1>
+        </header>
+        
+        <div class="main-layout">
+            <!-- 侧边栏 -->
+            <aside class="sidebar">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="搜索游戏..." id="search-input">
+                </div>
+                
+                <div class="filters">
+                    <h3><i class="fas fa-layer-group"></i> 分类</h3>
+                    <ul class="filter-options" id="category-filters">
+                        <li class="active" data-category="all">
+                            <div class="category-icon"><i class="fas fa-gamepad"></i></div>
+                            <span>所有游戏</span>
+                        </li>
+                        <!-- 分类将通过JavaScript动态生成 -->
+                    </ul>
+                </div>
+                
+                <div class="filters">
+                    <h3><i class="fas fa-sort"></i> 排序方式</h3>
+                    <ul class="filter-options">
+                        <li data-sort="name">
+                            <div class="category-icon"><i class="fas fa-font"></i></div>
+                            <span>按字母顺序</span>
+                        </li>
+                        <li data-sort="newest">
+                            <div class="category-icon"><i class="fas fa-star"></i></div>
+                            <span>最新添加</span>
+                        </li>
+                        <li data-sort="popular">
+                            <div class="category-icon"><i class="fas fa-fire"></i></div>
+                            <span>最受欢迎</span>
+                        </li>
+                    </ul>
+                </div>
+            </aside>
+            
+            <!-- 游戏网格 -->
+            <div class="games-grid" id="games-container">
+                <div class="loader">
+                    <div class="spinner"></div>
+                    <p>正在加载游戏数据...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 游戏弹窗 -->
+    <div class="game-modal">
+        <div class="modal-content">
+            <iframe class="game-frame" src="about:blank"></iframe>
+            <div class="modal-actions">
+                <button class="btn btn-close">
+                    <i class="fas fa-times"></i> 关闭游戏
+                </button>
+                <button class="btn btn-fullscreen">
+                    <i class="fas fa-expand"></i> 全屏
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 从system.json加载游戏数据
+        async function loadGameData() {
+            try {
+                // 实际应用中应该从 /manygame/system.json 加载
+                const response = await fetch('/manygame/system.json');
+                if (!response.ok) {
+                    throw new Error('无法加载游戏数据');
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('加载游戏数据失败:', error);
+                // 返回空数据
+                return {};
+            }
+        }
+
+        // 渲染分类筛选器
+        function renderCategoryFilters(categories) {
+            const filtersContainer = document.getElementById('category-filters');
+            
+            // 清空除了"所有游戏"以外的其他选项
+            const allGamesItem = filtersContainer.querySelector('[data-category="all"]');
+            filtersContainer.innerHTML = '';
+            filtersContainer.appendChild(allGamesItem);
+            
+            // 添加分类选项
+            for (const category of Object.keys(categories)) {
+                const li = document.createElement('li');
+                li.dataset.category = category;
+                
+                // 使用分类图标
+                li.innerHTML = `
+                    <div class="category-icon">
+                        <i class="fas fa-folder"></i>
+                    </div>
+                    <span>${category}</span>
+                `;
+                
+                filtersContainer.appendChild(li);
+            }
+            
+            // 添加筛选事件
+            filtersContainer.querySelectorAll('li').forEach(item => {
+                item.addEventListener('click', function() {
+                    filtersContainer.querySelectorAll('li').forEach(li => li.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const category = this.dataset.category;
+                    filterGamesByCategory(category);
+                });
+            });
+        }
+
+        // 按分类筛选游戏
+        function filterGamesByCategory(category) {
+            const gameCards = document.querySelectorAll('.game-card');
+            
+            gameCards.forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            // 隐藏空的分类标题
+            document.querySelectorAll('.category-title').forEach(title => {
+                const categoryName = title.dataset.category;
+                const categoryGames = document.querySelectorAll(`.game-card[data-category="${categoryName}"]`);
+                const visibleGames = Array.from(categoryGames).filter(card => card.style.display !== 'none');
+                
+                if (visibleGames.length === 0) {
+                    title.style.display = 'none';
+                } else {
+                    title.style.display = 'flex';
+                }
+            });
+        }
+
+        // 渲染游戏
+        function renderGames(gameData) {
+            const gamesContainer = document.getElementById('games-container');
+            gamesContainer.innerHTML = '';
+            
+            // 如果没有游戏数据
+            if (Object.keys(gameData).length === 0) {
+                gamesContainer.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 60px; opacity: 0.5; margin-bottom: 20px;"></i>
+                        <h3>没有找到游戏数据</h3>
+                        <p>请检查系统配置文件</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // 为每个分类添加游戏
+            for (const [category, games] of Object.entries(gameData)) {
+                // 添加分类标题
+                const categoryTitle = document.createElement('div');
+                categoryTitle.className = 'category-title';
+                categoryTitle.dataset.category = category;
+                categoryTitle.innerHTML = `
+                    <div class="category-title-icon">
+                        <i class="fas fa-folder"></i>
+                    </div>
+                    <span>${category}</span>
+                `;
+                gamesContainer.appendChild(categoryTitle);
+                
+                // 添加该分类下的游戏
+                if (Array.isArray(games)) {
+                    games.forEach(gameName => {
+                        const card = document.createElement('div');
+                        card.className = 'game-card';
+                        card.dataset.category = category;
+                        card.dataset.game = gameName;
+                        
+                        card.innerHTML = `
+                            <div class="game-logo">
+                                <i class="fas fa-gamepad"></i>
+                            </div>
+                            <div class="game-info">
+                                <div class="game-title">${gameName}</div>
+                                <div class="game-category">${category}</div>
+                            </div>
+                        `;
+                        
+                        card.addEventListener('click', () => openGame(gameName, category));
+                        gamesContainer.appendChild(card);
+                    });
+                }
+            }
+        }
+
+        // 打开游戏
+        function openGame(gameName, category) {
+            const modal = document.querySelector('.game-modal');
+            const iframe = document.querySelector('.game-frame');
+            
+            // 在实际应用中，这里应该加载游戏的实际路径
+            // 路径格式: manygame/game/${gameName}/index.html
+            const gamePath = `manygame/game/${gameName}/index.html`;
+            
+            // 模拟加载
+            iframe.srcdoc = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>${gameName}</title>
+                    <style>
+                        body {
+                            margin: 0;
+                            padding: 0;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            height: 100vh;
+                            background: linear-gradient(45deg, #1a2980 0%, #26d0ce 100%);
+                            color: white;
+                            font-family: Arial, sans-serif;
+                            text-align: center;
+                        }
+                        h1 {
+                            font-size: 3rem;
+                            text-shadow: 3px 3px 5px rgba(0,0,0,0.3);
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div>
+                        <h1>${gameName}</h1>
+                        <p>游戏加载中...</p>
+                        <p>分类: ${category}</p>
+                        <p>游戏路径: ${gamePath}</p>
+                    </div>
+                </body>
+                </html>
+            `;
+            
+            modal.classList.add('active');
+        }
+
+        // 关闭游戏弹窗
+        function closeGameModal() {
+            const modal = document.querySelector('.game-modal');
+            const iframe = document.querySelector('.game-frame');
+            
+            modal.classList.remove('active');
+            // 延迟重置iframe以确保过渡动画完成
+            setTimeout(() => {
+                iframe.srcdoc = '';
+            }, 300);
+        }
+
+        // 全屏功能
+        function toggleFullscreen() {
+            const modalContent = document.querySelector('.modal-content');
+            
+            if (!document.fullscreenElement) {
+                if (modalContent.requestFullscreen) {
+                    modalContent.requestFullscreen();
+                } else if (modalContent.webkitRequestFullscreen) {
+                    modalContent.webkitRequestFullscreen();
+                } else if (modalContent.msRequestFullscreen) {
+                    modalContent.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            }
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', async () => {
+            // 加载游戏数据
+            const gameData = await loadGameData();
+            
+            // 渲染分类筛选器
+            renderCategoryFilters(gameData);
+            
+            // 渲染游戏
+            renderGames(gameData);
+            
+            // 关闭按钮事件
+            document.querySelector('.btn-close').addEventListener('click', closeGameModal);
+            
+            // 全屏按钮事件
+            document.querySelector('.btn-fullscreen').addEventListener('click', toggleFullscreen);
+            
+            // 点击模态框背景关闭
+            document.querySelector('.game-modal').addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) {
+                    closeGameModal();
+                }
+            });
+            
+            // 搜索功能
+            const searchInput = document.getElementById('search-input');
+            searchInput.addEventListener('input', () => {
+                const searchTerm = searchInput.value.toLowerCase();
+                const gameCards = document.querySelectorAll('.game-card');
+                
+                gameCards.forEach(card => {
+                    const title = card.querySelector('.game-title').textContent.toLowerCase();
+                    const category = card.querySelector('.game-category').textContent.toLowerCase();
+                    
+                    if (title.includes(searchTerm) || category.includes(searchTerm)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+                
+                // 隐藏空的分类标题
+                document.querySelectorAll('.category-title').forEach(title => {
+                    const category = title.dataset.category;
+                    const categoryGames = document.querySelectorAll(`.game-card[data-category="${category}"]`);
+                    const visibleGames = Array.from(categoryGames).filter(card => card.style.display !== 'none');
+                    
+                    if (visibleGames.length === 0) {
+                        title.style.display = 'none';
+                    } else {
+                        title.style.display = 'flex';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
